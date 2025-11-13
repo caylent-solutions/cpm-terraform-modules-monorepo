@@ -1,0 +1,121 @@
+# CPM Terraform Modules Monorepo Packages
+
+Shared tooling packages for the [Caylent terraform-modules monorepo](https://github.com/caylent-solutions/terraform-modules).
+
+## Overview
+
+This repository provides standardized Make targets that replace the individual Makefiles in each Terraform module subdirectory within the terraform-modules monorepo.
+
+**What it provides:**
+- Testing Terraform modules with Terratest
+- Linting and formatting Terraform and Go code  
+- Generating documentation
+- Running security scans
+- Managing dependencies
+
+**What it replaces:**
+- Individual `Makefile` in each module subdirectory (e.g., `providers/aws/primitives/s3/Makefile`)
+- Eliminates duplication of Make targets across 100+ modules
+
+**What it does NOT replace:**
+- The root `Makefile` at `terraform-modules/Makefile` (monorepo-level tasks)
+
+## Usage
+
+This repository is automatically included via CPM manifests. Module developers don't clone this directly.
+
+### In a Terraform Module Subdirectory
+
+Each module subdirectory (e.g., `providers/aws/primitives/s3/`) gets a CPM Makefile:
+
+1. Add the CPM Makefile to the module root
+2. Run `make configure` to sync CPM packages
+3. Use the provided Make targets
+
+```bash
+cd providers/aws/primitives/s3
+make configure  # One-time setup
+make test       # Run tests
+make tf-lint    # Lint Terraform
+make tf-format  # Format Terraform
+```
+
+## Available Make Targets
+
+### Testing
+- `install` - Install Go dependencies and tools
+- `test` - Run all Terratest tests
+- `test-common` - Run common tests only
+- `tf-test` - Run tests with test.config environment
+
+### Terraform
+- `tf-plan` - Run terraform plan for examples
+- `tf-format` - Check Terraform formatting
+- `tf-format-fix` - Fix Terraform formatting
+- `tf-lint` - Lint Terraform files
+- `tf-security` - Run security checks with tfsec
+- `tf-docs` - Generate Terraform documentation
+- `tf-docs-check` - Verify documentation is up-to-date
+
+### Go
+- `go-lint` - Lint Go test files
+- `go-format` - Format Go test files
+
+### Cleanup
+- `clean` - Remove Terraform state and cache files
+- `clean-all` - Clean everything including Go cache
+
+### All-in-One
+- `test-all` - Run all validation and tests
+
+## Repository Structure
+
+```
+cpm-terraform-modules-monorepo/
+└── modules/                      # For individual module subdirectories
+    ├── linkfiles/
+    │   └── Makefile              # Wrapper that includes tasks
+    └── tasks/
+        └── Makefile              # Actual Make target implementations
+```
+
+## How It Works
+
+**When CPM syncs:**
+1. Clones to `packages/modules/` in the module directory
+2. Creates symlink: `packages/Makefile` → `packages/modules/linkfiles/Makefile`
+3. The linkfiles Makefile includes the tasks Makefile
+4. All targets become available in that module
+
+## Monorepo Context
+
+This tooling is designed for the [terraform-modules monorepo](https://github.com/caylent-solutions/terraform-modules) structure:
+
+```
+terraform-modules/
+├── Makefile                    # Monorepo-level tasks (NOT replaced by CPM)
+├── providers/
+│   └── aws/
+│       └── primitives/
+│           └── s3/
+│               ├── Makefile    # Module-level tasks (REPLACED by CPM)
+│               ├── main.tf
+│               ├── tests/
+│               └── examples/
+```
+
+Each module subdirectory uses CPM to get consistent Make targets without duplicating code across 100+ modules.
+
+## Relationship to terraform-modules Monorepo
+
+- **Monorepo root Makefile**: Handles monorepo-wide operations (validation, releases, health checks) - NOT managed by CPM
+- **CPM module Makefiles**: Handle individual module operations (test, lint, format, docs)
+- **Separation**: CPM provides module-level tooling; monorepo root Makefile stays in the monorepo
+
+## Version
+
+Current version: `1.0.0`
+
+## License
+
+Proprietary - Caylent Solutions
