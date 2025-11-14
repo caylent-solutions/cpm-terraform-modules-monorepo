@@ -1,4 +1,4 @@
-.PHONY: install test test-common clean clean-all go-lint go-format tf-docs tf-docs-check tf-format tf-format-fix tf-lint tf-plan tf-security tf-test test-all help
+.PHONY: install test test-common clean clean-all go-lint go-format tf-docs tf-docs-check tf-format tf-format-fix tf-lint tf-plan tf-security tf-test test-all
 
 # Set GOARCH based on system architecture
 define set_goarch
@@ -162,10 +162,4 @@ test-all:
 	@make tf-security
 	@make tf-test
 
-# List all available make tasks with descriptions
-help:
-	@echo "Available make tasks:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-	@echo ""
-	@echo "For tasks without descriptions:"
-	@grep -E '^[a-zA-Z_-]+:' $(MAKEFILE_LIST) | grep -v "## " | sort | awk 'BEGIN {FS = ":"}; {printf "\033[36m%-30s\033[0m\n", $$1}'
+
