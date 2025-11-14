@@ -112,7 +112,7 @@ Each module subdirectory uses CPM to get consistent Make targets without duplica
 
 ## Version
 
-Current version: `0.2.1`
+Current version: `1.0.0`
 
 ## License
 
